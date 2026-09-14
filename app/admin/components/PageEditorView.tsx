@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onAddBlock, onDeleteBlock, onMoveBlock, onSave, setView, saving, message, openMediaPicker, onUpdateProduct, onAddProduct, onDeleteProduct }: any) {
   const [newBlockType, setNewBlockType] = useState("text_image");
@@ -173,14 +173,16 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
             );
           }
           if (block.type === 'buttons') {
-            const buttonsText = block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n');
             return (
-              <div key={index} className="space-y-2 relative group">
-                <Controls />
-                <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Bouton(s)</label>
-                <textarea rows={3} value={buttonsText} onChange={(e) => updateButtons(index, e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" />
-                <p className="text-xs text-[#F5F0E8]/40 italic">Format : Texte du bouton, /lien</p>
-              </div>
+              <ButtonsEditor 
+                key={index} 
+                block={block} 
+                index={index} 
+                onMoveBlock={onMoveBlock}
+                onDeleteBlock={onDeleteBlock}
+                blocksLength={blocks.length}
+                updateButtons={updateButtons}
+              />
             );
           }
           if (block.type === 'disclaimer') {
@@ -231,6 +233,36 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
         </div>
         {message && <p className="text-center font-outfit text-sm text-[#D4AF37] mt-4">{message}</p>}
       </div>
+    </div>
+  );
+}
+
+// COMPOSANT DEDIÉ POUR LES BOUTONS (Règle le bug de l'espace)
+function ButtonsEditor({ block, index, onMoveBlock, onDeleteBlock, blocksLength, updateButtons }: any) {
+  const [text, setText] = useState(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n'));
+
+  // Synchronise le texte local si le bloc change (ex: on le déplace avec les flèches)
+  useEffect(() => {
+    setText(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n'));
+  }, [block]);
+
+  return (
+    <div className="space-y-2 relative group">
+      <div className="absolute top-0 right-0 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
+        <button onClick={() => onMoveBlock(index, 'up')} disabled={index === 0} className="text-xs text-[#F5F0E8]/80 hover:text-white disabled:opacity-30">↑</button>
+        <button onClick={() => onMoveBlock(index, 'down')} disabled={index === blocksLength - 1} className="text-xs text-[#F5F0E8]/80 hover:text-white disabled:opacity-30">↓</button>
+        <button onClick={() => onDeleteBlock(index)} className="text-xs text-red-400 hover:text-red-300">Supprimer</button>
+      </div>
+      <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Bouton(s)</label>
+      <textarea 
+        rows={3} 
+        value={text} 
+        onChange={(e) => setText(e.target.value)} 
+        // On ne met à jour l'état global que quand on quitte le champ
+        onBlur={() => updateButtons(index, text)} 
+        className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" 
+      />
+      <p className="text-xs text-[#F5F0E8]/40 italic">Format : Texte du bouton, /lien</p>
     </div>
   );
 }
