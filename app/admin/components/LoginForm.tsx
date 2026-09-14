@@ -26,37 +26,57 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-[#191970] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-[#F5F0E8] p-8 shadow-2xl border border-[#8B1A1A]">
-        <h1 className="font-cinzel text-3xl text-[#8B1A1A] text-center mb-8 uppercase tracking-wider">Espace Admin</h1>
+    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* FOND CIEL DE NUIT */}
+      <div className="fixed inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: "url('/fond-nuit.png')" }}></div>
+      <div className="fixed inset-0 z-0 bg-black/70"></div>
+
+      {/* CARTE DE CONNEXION (Brutalisme Sacré) */}
+      <div className="w-full max-w-md bg-[#0A0A0A]/80 border border-[#8B1A1A] backdrop-blur-md p-8 shadow-2xl relative z-10">
+        <h1 className="font-cinzel text-3xl text-[#D4AF37] text-center mb-8 uppercase tracking-wider">Espace Admin</h1>
         
-        {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+        {error && <p className="text-red-400 text-sm mb-4 text-center">{error}</p>}
         
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-xs text-[#2C2C2C]/60 mb-1 uppercase">Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-transparent border-b-2 border-[#2C2C2C]/30 py-2 focus:outline-none focus:border-[#8B1A1A]" />
+            <label className="block text-xs text-[#F5F0E8]/60 mb-1 uppercase">Email</label>
+            <input 
+              type="email" 
+              required 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              className="w-full bg-transparent border-b border-[#F5F0E8]/30 py-2 text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] transition-colors" 
+            />
           </div>
           <div>
-            <label className="block text-xs text-[#2C2C2C]/60 mb-1 uppercase">Mot de passe</label>
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-transparent border-b-2 border-[#2C2C2C]/30 py-2 focus:outline-none focus:border-[#8B1A1A]" />
+            <label className="block text-xs text-[#F5F0E8]/60 mb-1 uppercase">Mot de passe</label>
+            <input 
+              type="password" 
+              required 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="w-full bg-transparent border-b border-[#F5F0E8]/30 py-2 text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] transition-colors" 
+            />
           </div>
-          <button type="submit" className="w-full bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-sm py-3 hover:bg-[#2C2C2C] transition-colors">
+          <button 
+            type="submit" 
+            className="w-full bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-sm py-3 hover:bg-[#F5F0E8] hover:text-[#8B1A1A] transition-colors duration-300 font-light"
+          >
             Se connecter
           </button>
         </form>
 
-        {/* Séparateur */}
+        {/* SÉPARATEUR */}
         <div className="flex items-center my-6">
-          <div className="flex-1 h-[1px] bg-[#2C2C2C]/20"></div>
-          <span className="px-4 text-xs text-[#2C2C2C]/50 uppercase">Ou</span>
-          <div className="flex-1 h-[1px] bg-[#2C2C2C]/20"></div>
+          <div className="flex-1 h-[1px] bg-[#F5F0E8]/20"></div>
+          <span className="px-4 text-xs text-[#F5F0E8]/50 uppercase">Ou</span>
+          <div className="flex-1 h-[1px] bg-[#F5F0E8]/20"></div>
         </div>
 
-        {/* Bouton Google */}
+        {/* BOUTON GOOGLE */}
         <button 
           onClick={handleGoogleLogin} 
-          className="w-full flex items-center justify-center gap-3 border border-[#2C2C2C]/30 text-[#2C2C2C] font-outfit text-sm py-3 hover:bg-[#2C2C2C]/5 transition-colors"
+          className="w-full flex items-center justify-center gap-3 border border-[#F5F0E8]/30 text-[#F5F0E8] font-outfit text-sm py-3 hover:bg-[#F5F0E8]/10 transition-colors"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

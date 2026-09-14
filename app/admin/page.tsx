@@ -55,13 +55,7 @@ export default function AdminPage() {
 
   const fetchPages = async () => { const { data } = await supabase.from('pages').select('id, slug, title, content, order_index').order('order_index', { ascending: true }); if (data) setPages(data); };
   const fetchMedias = async () => { const { data } = await supabase.from('medias').select('*').order('created_at', { ascending: false }); if (data) setMedias(data); };
-  
-  // CORRECTION ICI : Tri par nom_prenom alphabétique (A -> Z)
-  const fetchClients = async () => { 
-    const { data } = await supabase.from('clients').select('*, origins(name)').eq('archived', false).order('nom_prenom', { ascending: true }); 
-    if (data) setClients(data); 
-  };
-  
+  const fetchClients = async () => { const { data } = await supabase.from('clients').select('*, origins(name)').eq('archived', false).order('nom_prenom', { ascending: true }); if (data) setClients(data); };
   const fetchOrigins = async () => { const { data } = await supabase.from('origins').select('*').order('name', { ascending: true }); if (data) setOrigins(data); };
   const fetchConsultationTypes = async () => { const { data } = await supabase.from('consultation_types').select('*').order('name', { ascending: true }); if (data) setConsultationTypes(data); };
 
@@ -380,11 +374,12 @@ export default function AdminPage() {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-[#191970] text-[#F5F0E8] flex items-center justify-center font-outfit text-lg">Vérification de la session...</div>;
+  if (loading) return <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8] flex items-center justify-center font-outfit text-lg">Vérification de la session...</div>;
   if (!session) return <LoginForm />;
 
   return (
-    <div className="relative min-h-[calc(100vh-160px)] text-[#F5F0E8] px-6 py-20 md:py-32 bg-[#191970] overflow-hidden">
+    <div className="relative min-h-[calc(100vh-160px)] text-[#F5F0E8] px-6 py-20 md:py-32 bg-[#0A0A0A] overflow-hidden">
+      {/* FOND CIEL DE NUIT */}
       <div className="fixed inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: "url('/fond-nuit.png')" }}></div>
       <div className="fixed inset-0 z-0 bg-black/60"></div>
 
