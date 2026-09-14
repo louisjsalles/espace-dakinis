@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
 
 const DakiniLogo = () => (
   <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
@@ -210,7 +209,7 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
   );
 }
 
-// --- NOUVEAU COMPOSANT : FORMULAIRE DE CONTACT FONCTIONNEL ---
+// --- COMPOSANT : FORMULAIRE DE CONTACT CONNECTE A L'API EMAIL ---
 function ContactForm({ block, settings }: { block: any, settings: any }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
@@ -220,18 +219,26 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
 
     const formData = new FormData(e.target as HTMLFormElement);
     
-    const { error } = await supabase.from('contact_messages').insert({
-      nom_prenom: formData.get('nom_prenom'),
-      telephone: formData.get('telephone'),
-      email: formData.get('email'),
-      message: formData.get('message'),
-    });
+    // On envoie les données à notre API Route qui va utiliser Nodemailer
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('nom_prenom'),
+          email: formData.get('email'),
+          message: `Téléphone : ${formData.get('telephone')}\n\nMessage :\n${formData.get('message')}`
+        })
+      });
 
-    if (error) {
+      if (response.ok) {
+        setStatus('success');
+        (e.target as HTMLFormElement).reset(); // Vide le formulaire
+      } else {
+        setStatus('error');
+      }
+    } catch (err) {
       setStatus('error');
-    } else {
-      setStatus('success');
-      (e.target as HTMLFormElement).reset(); // Vide le formulaire
     }
   };
 
