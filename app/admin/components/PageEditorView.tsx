@@ -59,11 +59,16 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
                   </div>
                   <div>
                     <label className="block text-xs text-[#F5F0E8]/60 mb-1">{block.type === 'image_standalone' ? 'Alignement' : 'Position Image'}</label>
-                    <select value={block.align || block.image_position || 'right'} onChange={(e) => updateField(index, block.type === 'image_standalone' ? 'align' : 'image_position', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]">
-                      {block.type === 'image_standalone' && <option value="left">Gauche</option>}
-                      <option value={block.type === 'image_standalone' ? 'center' : 'right'}>{block.type === 'image_standalone' ? 'Centre' : 'Droite'}</option>
-                      {block.type === 'image_standalone' && <option value="right">Droite</option>}
-                      {block.type === 'text_image' && <option value="left">Gauche</option>}
+                    <select 
+                      value={block.align || block.image_position || 'right'} 
+                      onChange={(e) => updateField(index, block.type === 'image_standalone' ? 'align' : 'image_position', e.target.value)} 
+                      className="w-full bg-[#0A0A0A] border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]"
+                      style={{ colorScheme: 'dark' }}
+                    >
+                      {block.type === 'image_standalone' && <option value="left" className="bg-[#0A0A0A] text-[#F5F0E8]">Gauche</option>}
+                      <option value={block.type === 'image_standalone' ? 'center' : 'right'} className="bg-[#0A0A0A] text-[#F5F0E8]">{block.type === 'image_standalone' ? 'Centre' : 'Droite'}</option>
+                      {block.type === 'image_standalone' && <option value="right" className="bg-[#0A0A0A] text-[#F5F0E8]">Droite</option>}
+                      {block.type === 'text_image' && <option value="left" className="bg-[#0A0A0A] text-[#F5F0E8]">Gauche</option>}
                     </select>
                   </div>
                   {block.type === 'image_standalone' && (<div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Texte ALT (SEO)</label><input type="text" value={block.alt || ''} onChange={(e) => updateField(index, 'alt', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>)}
@@ -173,7 +178,6 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
               <div key={index} className="space-y-2 relative group">
                 <Controls />
                 <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Bouton(s)</label>
-                {/* CORRECTION ICI : value et onChange au lieu de defaultValue et onBlur */}
                 <textarea rows={3} value={buttonsText} onChange={(e) => updateButtons(index, e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" />
                 <p className="text-xs text-[#F5F0E8]/40 italic">Format : Texte du bouton, /lien</p>
               </div>
@@ -200,18 +204,23 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
         })}
 
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center border-t border-[#F5F0E8]/20 pt-6 mt-8">
-          <select value={newBlockType} onChange={(e) => setNewBlockType(e.target.value)} className="bg-black/20 border border-[#F5F0E8]/30 text-[#F5F0E8] py-2 px-3 text-sm focus:outline-none focus:border-[#D4AF37]">
-            <option value="text_image">Bloc complet (Texte + Image)</option>
-            <option value="image_standalone">Photo seule</option>
-            <option value="heading_with_logo">Logo + Titre</option>
-            <option value="intro">Texte central</option>
-            <option value="separator">Trait rouge</option>
-            <option value="disclaimer">Cadre rouge</option>
-            <option value="buttons">Bouton(s)</option>
-            <option value="home_hero">Bannière d'accueil (Hero)</option>
-            <option value="spaces_grid">Grille des 3 Espaces</option>
-            <option value="contact_main">Bloc Page Contact</option>
-            <option value="products_grid">Grille de Produits (Boutique)</option>
+          <select 
+            value={newBlockType} 
+            onChange={(e) => setNewBlockType(e.target.value)} 
+            className="bg-[#0A0A0A] border border-[#F5F0E8]/30 text-[#F5F0E8] py-2 px-3 text-sm focus:outline-none focus:border-[#D4AF37]"
+            style={{ colorScheme: 'dark' }}
+          >
+            <option value="text_image" className="bg-[#0A0A0A] text-[#F5F0E8]">Bloc complet (Texte + Image)</option>
+            <option value="image_standalone" className="bg-[#0A0A0A] text-[#F5F0E8]">Photo seule</option>
+            <option value="heading_with_logo" className="bg-[#0A0A0A] text-[#F5F0E8]">Logo + Titre</option>
+            <option value="intro" className="bg-[#0A0A0A] text-[#F5F0E8]">Texte central</option>
+            <option value="separator" className="bg-[#0A0A0A] text-[#F5F0E8]">Trait rouge</option>
+            <option value="disclaimer" className="bg-[#0A0A0A] text-[#F5F0E8]">Cadre rouge</option>
+            <option value="buttons" className="bg-[#0A0A0A] text-[#F5F0E8]">Bouton(s)</option>
+            <option value="home_hero" className="bg-[#0A0A0A] text-[#F5F0E8]">Bannière d'accueil (Hero)</option>
+            <option value="spaces_grid" className="bg-[#0A0A0A] text-[#F5F0E8]">Grille des 3 Espaces</option>
+            <option value="contact_main" className="bg-[#0A0A0A] text-[#F5F0E8]">Bloc Page Contact</option>
+            <option value="products_grid" className="bg-[#0A0A0A] text-[#F5F0E8]">Grille de Produits (Boutique)</option>
           </select>
           <button type="button" onClick={() => onAddBlock(newBlockType)} className="bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] font-outfit uppercase tracking-widest text-xs px-6 py-2 hover:bg-[#D4AF37] hover:text-[#191970] transition-colors">+ Ajouter</button>
         </div>
