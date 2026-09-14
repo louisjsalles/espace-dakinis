@@ -226,8 +226,9 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.get('nom_prenom'),
+          phone: formData.get('telephone'),
           email: formData.get('email'),
-          message: `Téléphone : ${formData.get('telephone')}\n\nMessage :\n${formData.get('message')}`
+          message: formData.get('message')
         })
       });
 
