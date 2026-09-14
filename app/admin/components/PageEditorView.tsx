@@ -128,6 +128,13 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
                       <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Prix</label><input type="text" value={product.price || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'price', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-sm focus:outline-none focus:border-[#D4AF37]" /></div>
                       <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Lien Vinted</label><input type="text" value={product.vinted_link || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'vinted_link', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
                     </div>
+                    
+                    {/* NOUVEAUX CHAMPS POUR LES TEXTES DES BOUTONS */}
+                    <div className="grid grid-cols-2 gap-4 mt-2">
+                      <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Texte bouton Vinted</label><input type="text" value={product.vinted_button_text || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'vinted_button_text', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
+                      <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Texte bouton Contacter</label><input type="text" value={product.contact_button_text || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'contact_button_text', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
+                    </div>
+
                     <div>
                       <label className="block text-xs text-[#F5F0E8]/60 mb-1">URL de l'Image</label>
                       <div className="flex gap-2">

@@ -75,10 +75,10 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
                       <p className="font-cinzel text-xl text-[#F5F0E8] mb-8">{p.price}</p>
                       <div className="flex flex-col sm:flex-row gap-3 w-full">
                         <a href={p.vinted_link || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 border border-[#D4AF37] text-[#D4AF37] font-outfit uppercase tracking-widest text-xs px-4 py-3 hover:bg-[#D4AF37] hover:text-[#1A1A1A] transition-colors duration-300 text-center font-light">
-                          Acheter sur Vinted
+                          {p.vinted_button_text || 'Acheter sur Vinted'}
                         </a>
-                        <Link href="/contact" className="flex-1 bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-xs px-4 py-3 hover:bg-[#2C2C2C] transition-colors duration-300 font-light text-center">
-                          Contacter
+                        <Link href={p.contact_link || '/contact'} className="flex-1 bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-xs px-4 py-3 hover:bg-[#2C2C2C] transition-colors duration-300 font-light text-center">
+                          {p.contact_button_text || 'Contacter'}
                         </Link>
                       </div>
                     </div>
@@ -219,7 +219,6 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
 
     const formData = new FormData(e.target as HTMLFormElement);
     
-    // On envoie les données à notre API Route qui va utiliser Nodemailer
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -234,7 +233,7 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
 
       if (response.ok) {
         setStatus('success');
-        (e.target as HTMLFormElement).reset(); // Vide le formulaire
+        (e.target as HTMLFormElement).reset();
       } else {
         setStatus('error');
       }

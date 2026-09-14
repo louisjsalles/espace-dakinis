@@ -94,7 +94,7 @@ export default function AdminPage() {
 
   // Products Handlers
   const handleUpdateProduct = (bi: number, pi: number, f: string, v: string) => { const u = [...blocks]; const p = [...u[bi].products]; p[pi] = { ...p[pi], [f]: v }; u[bi].products = p; setBlocks(u); };
-  const handleAddProduct = (bi: number) => { const u = [...blocks]; u[bi].products = [...u[bi].products, { title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#" }]; setBlocks(u); };
+  const handleAddProduct = (bi: number) => { const u = [...blocks]; u[bi].products = [...u[bi].products, { title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#", vinted_button_text: "Acheter sur Vinted", contact_button_text: "Contacter" }]; setBlocks(u); };
   const handleDeleteProduct = (bi: number, pi: number) => { const u = [...blocks]; u[bi].products = u[bi].products.filter((_: any, i: number) => i !== pi); setBlocks(u); };
 
   const handleSavePage = async () => { setSaving(true); setMessage(""); const { error } = await supabase.from('pages').update({ content: blocks }).eq('id', currentPage.id); if (error) setMessage("Erreur lors de la sauvegarde."); else setMessage("Page mise à jour avec succès !"); setSaving(false); };
