@@ -129,7 +129,7 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
                       <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Lien Vinted</label><input type="text" value={product.vinted_link || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'vinted_link', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
                     </div>
                     
-                    {/* NOUVEAUX CHAMPS POUR LES TEXTES DES BOUTONS */}
+                    {/* CHAMPS POUR LES TEXTES DES BOUTONS */}
                     <div className="grid grid-cols-2 gap-4 mt-2">
                       <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Texte bouton Vinted</label><input type="text" value={product.vinted_button_text || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'vinted_button_text', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
                       <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Texte bouton Contacter</label><input type="text" value={product.contact_button_text || ''} onChange={(e) => onUpdateProduct(index, pIndex, 'contact_button_text', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
@@ -173,7 +173,8 @@ export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onA
               <div key={index} className="space-y-2 relative group">
                 <Controls />
                 <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Bouton(s)</label>
-                <textarea rows={3} defaultValue={buttonsText} onBlur={(e) => updateButtons(index, e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" />
+                {/* CORRECTION ICI : value et onChange au lieu de defaultValue et onBlur */}
+                <textarea rows={3} value={buttonsText} onChange={(e) => updateButtons(index, e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" />
                 <p className="text-xs text-[#F5F0E8]/40 italic">Format : Texte du bouton, /lien</p>
               </div>
             );
