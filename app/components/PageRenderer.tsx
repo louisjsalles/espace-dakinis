@@ -32,6 +32,12 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
     }
   };
 
+  // NOUVELLE FONCTION : Vider le panier global (déclenchée par le formulaire)
+  const clearCart = () => {
+    sessionStorage.removeItem('dakinis_services');
+    setCart([]);
+  };
+
   return (
     <main className="relative min-h-screen text-[#F5F0E8] px-6 py-20 md:py-32 bg-[#191970] overflow-hidden">
       <div className="fixed inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: `url('${bgImage}')` }}></div>
@@ -207,8 +213,9 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
               );
             }
 
+            // MISE À JOUR : On passe la fonction clearCart au formulaire
             if (block.type === 'contact_main') {
-              return <ContactForm key={index} block={block} settings={settings} />;
+              return <ContactForm key={index} block={block} settings={settings} onCartClear={clearCart} />;
             }
 
             if (block.type === 'disclaimer') {
@@ -258,7 +265,7 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
         </div>
       </div>
 
-      {/* BULLE FLOTTANTE "MON PANIER" - HAUT DROITE, SOUS LE HEADER, AVEC ANIMATION BOUNCE */}
+      {/* BULLE FLOTTANTE "MON PANIER" - HAUT DROITE, AVEC ANIMATION BOUNCE */}
       {cart.length > 0 && (
         <button 
           onClick={() => router.push('/contact')} 
@@ -275,8 +282,8 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
   );
 }
 
-// --- COMPOSANT : FORMULAIRE DE CONTACT ---
-function ContactForm({ block, settings }: { block: any, settings: any }) {
+// --- COMPOSANT : FORMULAIRE DE CONTACT (AVEC onCartClear) ---
+function ContactForm({ block, settings, onCartClear }: { block: any, settings: any, onCartClear: () => void }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [sessionMode, setSessionMode] = useState<string>('');
@@ -318,7 +325,9 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
 
       if (response.ok) {
         setStatus('success');
-        sessionStorage.removeItem('dakinis_services');
+        // On vide le panier visuellement et dans la mémoire du navigateur
+        setSelectedServices([]);
+        onCartClear(); 
         (e.target as HTMLFormElement).reset();
         setSessionMode('');
         setGiftVoucher(false);
@@ -370,7 +379,7 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
                 <input type="text" name="nom_prenom" required className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Votre nom" />
               </div>
 
-              {/* NOUVEAU CHAMP DATE DE NAISSANCE */}
+              {/* CHAMP DATE DE NAISSANCE */}
               <div>
                 <label className="block font-outfit text-sm uppercase tracking-wider mb-2 text-[#F5F0E8]/80 font-light">Date de naissance, heure et lieu</label>
                 <input type="text" name="birth_info" required className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Ex: 01/01/1990 à 14h30 à Toulouse" />
@@ -389,7 +398,7 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
                 <textarea name="message" rows={4} required className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Votre demande..."></textarea>
               </div>
 
-              {/* NOUVELLES CASES À COCHER */}
+              {/* CASES À COCHER */}
               <div className="space-y-4 pt-4 border-t border-[#F5F0E8]/20">
                 <div>
                   <p className="text-sm uppercase tracking-wider mb-3 text-[#F5F0E8]/80 font-light font-outfit">Modalité de la séance</p>
