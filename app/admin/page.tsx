@@ -97,7 +97,18 @@ export default function AdminPage() {
   const handleAddProduct = (bi: number) => { const u = [...blocks]; u[bi].products = [...u[bi].products, { title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#", vinted_button_text: "Acheter sur Vinted", contact_button_text: "Contacter" }]; setBlocks(u); };
   const handleDeleteProduct = (bi: number, pi: number) => { const u = [...blocks]; u[bi].products = u[bi].products.filter((_: any, i: number) => i !== pi); setBlocks(u); };
 
-  const handleSavePage = async () => { setSaving(true); setMessage(""); const { error } = await supabase.from('pages').update({ content: blocks }).eq('id', currentPage.id); if (error) setMessage("Erreur lors de la sauvegarde."); else setMessage("Page mise à jour avec succès !"); setSaving(false); };
+  // MISE À JOUR : Sauvegarde le contenu ET la description SEO
+  const handleSavePage = async () => { 
+    setSaving(true); 
+    setMessage(""); 
+    const { error } = await supabase.from('pages').update({ 
+      content: blocks, 
+      seo_description: currentPage?.seo_description || null 
+    }).eq('id', currentPage.id); 
+    if (error) setMessage("Erreur lors de la sauvegarde."); 
+    else setMessage("Page mise à jour avec succès !"); 
+    setSaving(false); 
+  };
 
   // Media Handlers
   const openMediaPicker = (index: number, productIndex: number | null = null) => { setPickerTargetIndex(index); setPickerTargetProduct(productIndex); setShowMediaPicker(true); };
@@ -130,7 +141,7 @@ export default function AdminPage() {
     }
   };
 
-  // Client Handlers (OPTIMISÉ AVEC PROMISE.ALL)
+  // Client Handlers
   const handleViewClient = async (client: any) => {
     setCurrentClient(client);
     try {
@@ -249,7 +260,7 @@ export default function AdminPage() {
     return true;
   };
 
-  // COMPTABILITÉ HANDLERS (OPTIMISÉ AVEC PROMISE.ALL)
+  // COMPTABILITÉ HANDLERS
   const handleViewAccounting = async (client: any) => {
     setCurrentClient(client);
     
@@ -446,11 +457,25 @@ export default function AdminPage() {
           />
         )}
 
+        {/* MISE À JOUR : On passe les props seoDescription et onUpdateSeoDescription à PageEditorView */}
         {view === "pageEditor" && (
-          <PageEditorView currentPage={currentPage} blocks={blocks} onUpdateBlock={handleUpdateBlock} onAddBlock={handleAddBlock}
-            onDeleteBlock={handleDeleteBlock} onMoveBlock={handleMoveBlock} onSave={handleSavePage} 
-            setView={setView} saving={saving} message={message} openMediaPicker={openMediaPicker}
-            onUpdateProduct={handleUpdateProduct} onAddProduct={handleAddProduct} onDeleteProduct={handleDeleteProduct}
+          <PageEditorView 
+            currentPage={currentPage} 
+            seoDescription={currentPage?.seo_description || ''} 
+            onUpdateSeoDescription={(val: string) => setCurrentPage({...currentPage, seo_description: val})}
+            blocks={blocks} 
+            onUpdateBlock={handleUpdateBlock} 
+            onAddBlock={handleAddBlock}
+            onDeleteBlock={handleDeleteBlock} 
+            onMoveBlock={handleMoveBlock} 
+            onSave={handleSavePage} 
+            setView={setView} 
+            saving={saving} 
+            message={message} 
+            openMediaPicker={openMediaPicker}
+            onUpdateProduct={handleUpdateProduct} 
+            onAddProduct={handleAddProduct} 
+            onDeleteProduct={handleDeleteProduct}
           />
         )}
       </div>
