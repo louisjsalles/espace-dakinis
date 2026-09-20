@@ -1,11 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function PageEditorView({ currentPage, seoDescription, onUpdateSeoDescription, blocks, onUpdateBlock, onAddBlock, onDeleteBlock, onMoveBlock, onSave, setView, saving, message, openMediaPicker, onUpdateProduct, onAddProduct, onDeleteProduct }: any) {
+export default function PageEditorView({ currentPage, blocks, onUpdateBlock, onAddBlock, onDeleteBlock, onMoveBlock, onSave, setView, saving, message, openMediaPicker, onUpdateProduct, onAddProduct, onDeleteProduct }: any) {
   const [newBlockType, setNewBlockType] = useState("text_image");
   const updateField = (index: number, field: string, value: string) => { const updatedBlock = { ...blocks[index], [field]: value }; onUpdateBlock(index, updatedBlock); };
   const updateList = (index: number, listTitle: string, itemsString: string) => { const items = itemsString.split('\n').filter(item => item.trim() !== ''); const updatedBlock = { ...blocks[index], list: { title: listTitle, items: items } }; onUpdateBlock(index, updatedBlock); };
   const updateButtons = (index: number, buttonsString: string) => { const lines = buttonsString.split('\n').filter(line => line.trim() !== ''); const buttons = lines.map(line => { const parts = line.split(','); return { text: parts[0]?.trim() || "", link: parts[1]?.trim() || "/contact" }; }); const updatedBlock = { ...blocks[index], buttons: buttons }; onUpdateBlock(index, updatedBlock); };
+
+  const updateCard = (blockIndex: number, cardIndex: number, field: string, value: string) => {
+    const block = blocks[blockIndex];
+    const cards = [...(block.cards || [])];
+    cards[cardIndex] = { ...cards[cardIndex], [field]: value };
+    onUpdateBlock(blockIndex, { ...block, cards });
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -14,14 +21,6 @@ export default function PageEditorView({ currentPage, seoDescription, onUpdateSe
         <div className="w-24 h-[2px] bg-[#8B1A1A] mx-auto mt-4" style={{ clipPath: 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)' }}></div>
       </div>
       <div className="space-y-8 border border-[#8B1A1A] bg-[#8B1A1A]/30 backdrop-blur-md shadow-2xl p-8 md:p-10">
-        
-        {/* NOUVEAU CHAMP SEO DESCRIPTION */}
-        <div className="space-y-2 mb-8 border-b border-[#F5F0E8]/20 pb-6">
-          <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Description courte (SEO & Aperçu)</label>
-          <textarea rows={2} value={seoDescription} onChange={(e) => onUpdateSeoDescription(e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37] rounded-sm" placeholder="Description utilisée pour le référencement Google et l'aperçu dans la grille des espaces." />
-          <p className="text-xs text-[#F5F0E8]/40 italic">⚠️ Si cette page est un des 3 espaces, ce texte s'affichera dans les tableaux de la page d'accueil.</p>
-        </div>
-
         {blocks.map((block: any, index: number) => {
           const Controls = () => (
             <div className="absolute top-0 right-0 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
@@ -117,12 +116,22 @@ export default function PageEditorView({ currentPage, seoDescription, onUpdateSe
             );
           }
           if (block.type === 'spaces_grid') {
+            const cards = block.cards || [];
             return (
-              <div key={index} className="space-y-2 relative group">
+              <div key={index} className="space-y-4 border-l-2 border-[#D4AF37]/50 pl-6 relative group">
                 <Controls />
                 <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Grille des 3 Espaces</label>
-                <input type="text" value={block.title || ''} onChange={(e) => updateField(index, 'title', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" placeholder="Titre de la section" />
-                <p className="text-xs text-[#F5F0E8]/40 italic">Ce bloc affichera automatiquement les 3 pages de l'espace. Pour modifier le texte sous chaque tableau, édite la page concernée et remplis son champ "Description courte" en haut.</p>
+                <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Titre de la section</label><input type="text" value={block.title || ''} onChange={(e) => updateField(index, 'title', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" /></div>
+                
+                {cards.length > 0 ? cards.map((card: any, cIndex: number) => (
+                  <div key={cIndex} className="bg-black/30 p-4 rounded-sm space-y-2 border border-[#F5F0E8]/10">
+                    <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Titre du tableau {cIndex + 1}</label><input type="text" value={card.title || ''} onChange={(e) => updateCard(index, cIndex, 'title', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-sm focus:outline-none focus:border-[#D4AF37]" /></div>
+                    <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Description</label><textarea rows={2} value={card.description || ''} onChange={(e) => updateCard(index, cIndex, 'description', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
+                    <div><label className="block text-xs text-[#F5F0E8]/60 mb-1">Lien (ex: /espaces/voir-clairement)</label><input type="text" value={card.link || ''} onChange={(e) => updateCard(index, cIndex, 'link', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]" /></div>
+                  </div>
+                )) : (
+                  <p className="text-xs text-[#F5F0E8]/40 italic">Aucune carte. Supprimez ce bloc et ajoutez-en un nouveau pour générer les cartes.</p>
+                )}
               </div>
             );
           }

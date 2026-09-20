@@ -87,17 +87,19 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
               );
             }
 
-            if (block.type === 'spaces_grid' && espaces) {
+            // MISE À JOUR : Affichage des Espaces avec les nouvelles données modifiables
+            if (block.type === 'spaces_grid') {
+              const cards = block.cards || [];
               return (
                 <section key={index} className="py-32 px-6">
                   <div className="max-w-6xl mx-auto text-center">
                     <h2 className="font-cinzel text-4xl md:text-5xl font-medium text-[#F5F0E8] mb-4">{block.title || "Les 3 Espaces"}</h2>
                     <div className="w-32 h-[2px] bg-[#8B1A1A] mx-auto mb-20" style={{ clipPath: 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)' }}></div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
-                      {espaces.map((espace: any) => (
-                        <Link key={espace.slug} href={`/${espace.slug}`} className="group block p-10 border-t-2 border-[#8B1A1A] bg-[#8B1A1A]/50 backdrop-blur-md hover:bg-[#8B1A1A]/70 transition-colors duration-500">
-                          <h3 className="font-cinzel text-2xl mb-4 text-[#D4AF37] transition-colors">{espace.title}</h3>
-                          <p className="font-outfit text-sm text-[#F5F0E8]/70 font-light mb-4 italic">{espace.seo_description}</p>
+                      {cards.map((card: any, i: number) => (
+                        <Link key={i} href={card.link || '#'} className="group block p-10 border-t-2 border-[#8B1A1A] bg-[#8B1A1A]/50 backdrop-blur-md hover:bg-[#8B1A1A]/70 transition-colors duration-500">
+                          <h3 className="font-cinzel text-2xl mb-4 text-[#D4AF37] transition-colors">{card.title}</h3>
+                          <p className="font-outfit text-sm text-[#F5F0E8]/70 font-light mb-4 italic">{card.description}</p>
                         </Link>
                       ))}
                     </div>

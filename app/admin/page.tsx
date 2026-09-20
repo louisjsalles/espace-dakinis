@@ -82,7 +82,14 @@ export default function AdminPage() {
     else if (type === 'image_standalone') { n.image = "/fond-nuit.png"; n.align = "center"; n.alt = "Description"; }
     else if (type === 'contact_main') { n.title1 = "Prendre Contact"; n.image = "/alexandra.png"; n.title2 = "PAIEMENT & MODALITÉS"; n.paiement_text = "Engagement et respect mutuel. Toute séance annulée moins de 48h avant est due."; n.button_text = "Envoyer la demande"; }
     else if (type === 'home_hero') { n.title = "Espace"; n.title2 = "DAKINIS"; n.subtitle = "Accompagnement à la transformation et à l'éveil"; n.text = "Texte d'accroche..."; n.button_text = "Découvrir les Espaces"; n.button_link = "/espaces/voir-clairement"; n.image = "/dakini-or.png"; }
-    else if (type === 'spaces_grid') n.title = "Les 3 Espaces";
+    else if (type === 'spaces_grid') {
+      n.title = "Les 3 Espaces";
+      n.cards = [
+        { title: "Espace 1", description: "Description de l'espace 1", link: "#" },
+        { title: "Espace 2", description: "Description de l'espace 2", link: "#" },
+        { title: "Espace 3", description: "Description de l'espace 3", link: "#" }
+      ];
+    }
     else if (type === 'products_grid') n.products = [{ title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#" }];
     setBlocks([...blocks, n]);
   };
