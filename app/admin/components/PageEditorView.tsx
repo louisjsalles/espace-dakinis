@@ -49,7 +49,6 @@ export default function PageEditorView({ currentPage, seoDescription, onUpdateSe
             );
           }
           
-          // MISE À JOUR : LOGO + TITRE AVEC ALIGNEMENT
           if (block.type === 'heading_with_logo') {
             return (
               <div key={index} className="space-y-2 relative group border-l-2 border-[#D4AF37]/50 pl-6">
@@ -329,9 +328,14 @@ function RichTextEditor({ value, onChange }: { value: string, onChange: (val: st
   );
 }
 
+// BLINDAGE DU COMPOSANT BOUTONS
 function ButtonsEditor({ block, index, onMoveBlock, onDeleteBlock, blocksLength, updateButtons }: any) {
-  const [text, setText] = useState(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n'));
-  useEffect(() => { setText(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n')); }, [block]);
+  // Sécurité: si block.buttons est vide, on met un tableau vide pour éviter que .map() plante
+  const [text, setText] = useState((block.buttons || []).map((b: any) => `${b.text || ''}, ${b.link || ''}`).join('\n'));
+
+  useEffect(() => {
+    setText((block.buttons || []).map((b: any) => `${b.text || ''}, ${b.link || ''}`).join('\n'));
+  }, [block]);
 
   return (
     <div className="space-y-2 relative group">

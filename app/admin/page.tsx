@@ -90,7 +90,7 @@ export default function AdminPage() {
         { title: "Espace 3", description: "Description de l'espace 3", link: "#" }
       ];
     }
-    else if (type === 'products_grid') n.products = [{ title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#" }];
+    else if (type === 'products_grid') n.products = [{ title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#", vinted_button_text: "Acheter sur Vinted", contact_button_text: "Contacter" }];
     setBlocks([...blocks, n]);
   };
   const handleDeleteBlock = (index: number) => { setBlocks(blocks.filter((_, i) => i !== index)); };
@@ -104,16 +104,23 @@ export default function AdminPage() {
   const handleAddProduct = (bi: number) => { const u = [...blocks]; u[bi].products = [...u[bi].products, { title: "Nouveau produit", subtitle: "", description: "", price: "0 €", image: "/fond-nuit.png", vinted_link: "#", vinted_button_text: "Acheter sur Vinted", contact_button_text: "Contacter" }]; setBlocks(u); };
   const handleDeleteProduct = (bi: number, pi: number) => { const u = [...blocks]; u[bi].products = u[bi].products.filter((_: any, i: number) => i !== pi); setBlocks(u); };
 
-  // MISE À JOUR : Sauvegarde le contenu ET la description SEO
+  // MISE À JOUR : Sauvegarde avec affichage de l'erreur exacte et SEO
   const handleSavePage = async () => { 
     setSaving(true); 
-    setMessage(""); 
+    setMessage("Sauvegarde en cours..."); 
     const { error } = await supabase.from('pages').update({ 
       content: blocks, 
       seo_description: currentPage?.seo_description || null 
     }).eq('id', currentPage.id); 
-    if (error) setMessage("Erreur lors de la sauvegarde."); 
-    else setMessage("Page mise à jour avec succès !"); 
+    
+    if (error) {
+      console.error("Erreur de sauvegarde:", error);
+      setMessage("Erreur: " + error.message); 
+      alert("Erreur lors de la sauvegarde : " + error.message);
+    } else {
+      setMessage("Page mise à jour avec succès !"); 
+      fetchPages(); 
+    }
     setSaving(false); 
   };
 
@@ -464,7 +471,6 @@ export default function AdminPage() {
           />
         )}
 
-        {/* MISE À JOUR : On passe les props seoDescription et onUpdateSeoDescription à PageEditorView */}
         {view === "pageEditor" && (
           <PageEditorView 
             currentPage={currentPage} 

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const DakiniLogo = () => (
-  <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+  <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
     <polygon points="50,90 90,20 10,20" fill="#8B1A1A" />
     <line x1="50" y1="10" x2="50" y2="100" stroke="#D4AF37" strokeWidth="3" />
     <circle cx="50" cy="55" r="15" fill="#2C2C2C" />
@@ -12,8 +13,24 @@ const DakiniLogo = () => (
 );
 
 export default function PageRenderer({ page, espaces, settings }: { page: any, espaces?: any[], settings?: any }) {
+  const router = useRouter();
   const bgImage = page.background || '/fond-nuit.png';
   const overlayClass = page.background === '/terre-lave.png' ? 'bg-black/60' : 'bg-black/40';
+  
+  const [cart, setCart] = useState<string[]>([]);
+
+  useEffect(() => {
+    setCart(JSON.parse(sessionStorage.getItem('dakinis_services') || '[]'));
+  }, []);
+
+  const addToCart = (serviceName: string) => {
+    const existing = JSON.parse(sessionStorage.getItem('dakinis_services') || '[]');
+    if (!existing.includes(serviceName)) {
+      existing.push(serviceName);
+      sessionStorage.setItem('dakinis_services', JSON.stringify(existing));
+      setCart(existing);
+    }
+  };
 
   return (
     <main className="relative min-h-screen text-[#F5F0E8] px-6 py-20 md:py-32 bg-[#191970] overflow-hidden">
@@ -66,23 +83,35 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
             if (block.type === 'products_grid') {
               return (
                 <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-                  {block.products.map((p: any, i: number) => (
-                    <div key={i} className="flex flex-col items-center text-center border border-[#F5F0E8]/10 p-8 bg-[#0F0F0F]/90 backdrop-blur-sm">
-                      <img src={p.image} alt={p.title} className="w-full aspect-square object-cover border border-[#F5F0E8]/20 mb-6" />
-                      <h2 className="font-cinzel text-2xl text-[#D4AF37] mb-2">{p.title}</h2>
-                      <p className="font-outfit text-sm text-[#F5F0E8]/60 mb-4 italic font-light">{p.subtitle}</p>
-                      <p className="font-outfit text-base text-[#F5F0E8]/90 mb-6 font-light">{p.description}</p>
-                      <p className="font-cinzel text-xl text-[#F5F0E8] mb-8">{p.price}</p>
-                      <div className="flex flex-col sm:flex-row gap-3 w-full">
-                        <a href={p.vinted_link || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 border border-[#D4AF37] text-[#D4AF37] font-outfit uppercase tracking-widest text-xs px-4 py-3 hover:bg-[#D4AF37] hover:text-[#1A1A1A] transition-colors duration-300 text-center font-light">
-                          {p.vinted_button_text || 'Acheter sur Vinted'}
-                        </a>
-                        <Link href={p.contact_link || '/contact'} className="flex-1 bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-xs px-4 py-3 hover:bg-[#2C2C2C] transition-colors duration-300 font-light text-center">
-                          {p.contact_button_text || 'Contacter'}
-                        </Link>
+                  {block.products.map((p: any, i: number) => {
+                    const isAdded = cart.includes(p.title);
+                    
+                    return (
+                      <div key={i} className="flex flex-col items-center text-center border border-[#F5F0E8]/10 p-8 bg-[#0F0F0F]/90 backdrop-blur-sm">
+                        <img src={p.image} alt={p.title} className="w-full aspect-square object-cover border border-[#F5F0E8]/20 mb-6" />
+                        <h2 className="font-cinzel text-2xl text-[#D4AF37] mb-2">{p.title}</h2>
+                        <p className="font-outfit text-sm text-[#F5F0E8]/60 mb-4 italic font-light">{p.subtitle}</p>
+                        <p className="font-outfit text-base text-[#F5F0E8]/90 mb-6 font-light">{p.description}</p>
+                        <p className="font-cinzel text-xl text-[#F5F0E8] mb-8">{p.price}</p>
+                        <div className="flex flex-col sm:flex-row gap-3 w-full">
+                          <a href={p.vinted_link || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 border border-[#D4AF37] text-[#D4AF37] font-outfit uppercase tracking-widest text-xs px-4 py-3 hover:bg-[#D4AF37] hover:text-[#1A1A1A] transition-colors duration-300 text-center font-light">
+                            {p.vinted_button_text || 'Acheter sur Vinted'}
+                          </a>
+                          <button 
+                            type="button"
+                            onClick={() => addToCart(p.title)} 
+                            className={`flex-1 font-outfit uppercase tracking-widest text-xs px-4 py-3 transition-colors duration-300 font-light text-center ${
+                              isAdded 
+                                ? 'bg-[#D4AF37] text-[#191970] border border-[#D4AF37]' 
+                                : 'bg-[#8B1A1A] text-[#F5F0E8] hover:bg-[#2C2C2C]'
+                            }`}
+                          >
+                            {isAdded && '✓ '}{p.contact_button_text || 'Contacter'}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               );
             }
@@ -124,7 +153,6 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
               );
             }
 
-            // MISE À JOUR : Application de l'alignement pour Logo + Titre
             if (block.type === 'heading_with_logo') {
               const alignClass = block.align === 'right' ? 'justify-end' : block.align === 'center' ? 'justify-center' : 'justify-start';
               return (
@@ -194,11 +222,33 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
             if (block.type === 'buttons') {
               return (
                 <div key={index} className="flex flex-col sm:flex-row gap-4 justify-center">
-                  {block.buttons.map((btn: any, i: number) => (
-                    <a key={i} href={btn.link} className="bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-sm px-8 py-4 hover:bg-[#F5F0E8] hover:text-[#8B1A1A] transition-colors duration-300 font-light text-center">
-                      {btn.text}
-                    </a>
-                  ))}
+                  {block.buttons.map((btn: any, i: number) => {
+                    const isContactBtn = btn.link === '/contact';
+                    const isAdded = cart.includes(btn.text);
+                    
+                    if (isContactBtn) {
+                      return (
+                        <button 
+                          key={i} 
+                          type="button"
+                          onClick={() => addToCart(btn.text)} 
+                          className={`font-outfit uppercase tracking-widest text-sm px-8 py-4 transition-colors duration-300 font-light text-center ${
+                            isAdded 
+                              ? 'bg-[#D4AF37] text-[#191970]' 
+                              : 'bg-[#8B1A1A] text-[#F5F0E8] hover:bg-[#F5F0E8] hover:text-[#8B1A1A]'
+                          }`}
+                        >
+                          {isAdded && '✓ '}{btn.text}
+                        </button>
+                      );
+                    }
+                    
+                    return (
+                      <a key={i} href={btn.link} className="bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-sm px-8 py-4 hover:bg-[#F5F0E8] hover:text-[#8B1A1A] transition-colors duration-300 font-light text-center">
+                        {btn.text}
+                      </a>
+                    );
+                  })}
                 </div>
               );
             }
@@ -206,21 +256,49 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
             return null;
           })}
         </div>
-
       </div>
+
+      {/* BULLE FLOTTANTE "MON PANIER" - HAUT DROITE, SOUS LE HEADER, AVEC ANIMATION BOUNCE */}
+      {cart.length > 0 && (
+        <button 
+          onClick={() => router.push('/contact')} 
+          className="fixed top-28 right-8 z-50 bg-[#8B1A1A] text-[#F5F0E8] font-outfit uppercase tracking-widest text-sm px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 hover:bg-[#D4AF37] hover:text-[#191970] transition-colors duration-300 animate-bounce"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Mon Panier ({cart.length})
+        </button>
+      )}
+
     </main>
   );
 }
 
-// --- COMPOSANT : FORMULAIRE DE CONTACT CONNECTE A L'API EMAIL ---
+// --- COMPOSANT : FORMULAIRE DE CONTACT ---
 function ContactForm({ block, settings }: { block: any, settings: any }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [sessionMode, setSessionMode] = useState<string>('');
+  const [giftVoucher, setGiftVoucher] = useState<boolean>(false);
+
+  useEffect(() => {
+    const services = JSON.parse(sessionStorage.getItem('dakinis_services') || '[]');
+    setSelectedServices(services);
+  }, []);
+
+  const removeService = (index: number) => {
+    const newServices = selectedServices.filter((_, i) => i !== index);
+    setSelectedServices(newServices);
+    sessionStorage.setItem('dakinis_services', JSON.stringify(newServices));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
 
     const formData = new FormData(e.target as HTMLFormElement);
+    const userMessage = formData.get('message') as string;
     
     try {
       const response = await fetch('/api/contact', {
@@ -230,13 +308,20 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
           name: formData.get('nom_prenom'),
           phone: formData.get('telephone'),
           email: formData.get('email'),
-          message: formData.get('message')
+          message: userMessage,
+          birthInfo: formData.get('birth_info'),
+          sessionMode: sessionMode,
+          giftVoucher: giftVoucher,
+          services: selectedServices
         })
       });
 
       if (response.ok) {
         setStatus('success');
+        sessionStorage.removeItem('dakinis_services');
         (e.target as HTMLFormElement).reset();
+        setSessionMode('');
+        setGiftVoucher(false);
       } else {
         setStatus('error');
       }
@@ -262,10 +347,35 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
             </div>
           ) : (
             <div className="space-y-6 max-w-xl">
+              
+              {selectedServices.length > 0 && (
+                <div className="border border-[#D4AF37]/50 bg-[#D4AF37]/10 p-4 rounded-sm">
+                  <p className="text-sm uppercase tracking-wider text-[#D4AF37] mb-3 font-outfit">Je souhaite :</p>
+                  <ul className="space-y-2">
+                    {selectedServices.map((s, i) => (
+                      <li key={i} className="flex items-center justify-between text-sm text-[#F5F0E8] font-outfit">
+                        <div className="flex items-center gap-2">
+                          <DakiniLogo />
+                          <span>{s}</span>
+                        </div>
+                        <button type="button" onClick={() => removeService(i)} className="text-red-400 text-xs hover:text-red-300">Retirer</button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div>
                 <label className="block font-outfit text-sm uppercase tracking-wider mb-2 text-[#F5F0E8]/80 font-light">Nom & Prénom</label>
                 <input type="text" name="nom_prenom" required className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Votre nom" />
               </div>
+
+              {/* NOUVEAU CHAMP DATE DE NAISSANCE */}
+              <div>
+                <label className="block font-outfit text-sm uppercase tracking-wider mb-2 text-[#F5F0E8]/80 font-light">Date de naissance, heure et lieu</label>
+                <input type="text" name="birth_info" required className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Ex: 01/01/1990 à 14h30 à Toulouse" />
+              </div>
+
               <div>
                 <label className="block font-outfit text-sm uppercase tracking-wider mb-2 text-[#F5F0E8]/80 font-light">Téléphone</label>
                 <input type="tel" name="telephone" className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Votre numéro de téléphone" />
@@ -278,6 +388,30 @@ function ContactForm({ block, settings }: { block: any, settings: any }) {
                 <label className="block font-outfit text-sm uppercase tracking-wider mb-2 text-[#F5F0E8]/80 font-light">Message</label>
                 <textarea name="message" rows={4} required className="w-full bg-transparent border-b-2 border-[#F5F0E8]/50 py-2 px-1 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#8B1A1A] font-light placeholder:text-[#F5F0E8]/40" placeholder="Votre demande..."></textarea>
               </div>
+
+              {/* NOUVELLES CASES À COCHER */}
+              <div className="space-y-4 pt-4 border-t border-[#F5F0E8]/20">
+                <div>
+                  <p className="text-sm uppercase tracking-wider mb-3 text-[#F5F0E8]/80 font-light font-outfit">Modalité de la séance</p>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer text-[#F5F0E8] font-outfit text-sm">
+                      <input type="checkbox" checked={sessionMode === 'Présentiel'} onChange={() => setSessionMode(prev => prev === 'Présentiel' ? '' : 'Présentiel')} className="w-4 h-4 accent-[#8B1A1A]"/>
+                      Présentiel
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer text-[#F5F0E8] font-outfit text-sm">
+                      <input type="checkbox" checked={sessionMode === 'Distanciel'} onChange={() => setSessionMode(prev => prev === 'Distanciel' ? '' : 'Distanciel')} className="w-4 h-4 accent-[#8B1A1A]"/>
+                      Distanciel
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 cursor-pointer text-[#F5F0E8] font-outfit text-sm">
+                    <input type="checkbox" checked={giftVoucher} onChange={(e) => setGiftVoucher(e.target.checked)} className="w-4 h-4 accent-[#8B1A1A]"/>
+                    Chèque Cadeau
+                  </label>
+                </div>
+              </div>
+
               {status === 'error' && <p className="text-red-400 text-sm">Une erreur est survenue. Veuillez réessayer.</p>}
             </div>
           )}
