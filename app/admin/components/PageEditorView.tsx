@@ -22,6 +22,13 @@ export default function PageEditorView({ currentPage, seoDescription, onUpdateSe
       </div>
       <div className="space-y-8 border border-[#8B1A1A] bg-[#8B1A1A]/30 backdrop-blur-md shadow-2xl p-8 md:p-10">
         
+        {/* CHAMP SEO DESCRIPTION */}
+        <div className="space-y-2 mb-8 border-b border-[#F5F0E8]/20 pb-6">
+          <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Description courte (SEO & Aperçu)</label>
+          <textarea rows={2} value={seoDescription} onChange={(e) => onUpdateSeoDescription(e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-sm text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37] rounded-sm" placeholder="Description utilisée pour le référencement Google et l'aperçu dans la grille des espaces." />
+          <p className="text-xs text-[#F5F0E8]/40 italic">⚠️ Si cette page est un des 3 espaces, ce texte s'affichera dans les tableaux de la page d'accueil.</p>
+        </div>
+
         {blocks.map((block: any, index: number) => {
           const Controls = () => (
             <div className="absolute top-0 right-0 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
@@ -41,15 +48,31 @@ export default function PageEditorView({ currentPage, seoDescription, onUpdateSe
               </div>
             );
           }
+          
+          // MISE À JOUR : LOGO + TITRE AVEC ALIGNEMENT
           if (block.type === 'heading_with_logo') {
             return (
-              <div key={index} className="space-y-2 relative group">
+              <div key={index} className="space-y-2 relative group border-l-2 border-[#D4AF37]/50 pl-6">
                 <Controls />
                 <label className="block font-outfit text-sm uppercase tracking-wider text-[#D4AF37] font-light">Titre avec Logo</label>
                 <input type="text" value={block.text} onChange={(e) => updateField(index, 'text', e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-lg text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37]" />
+                <div>
+                  <label className="block text-xs text-[#F5F0E8]/60 mb-1">Alignement</label>
+                  <select 
+                    value={block.align || 'left'} 
+                    onChange={(e) => updateField(index, 'align', e.target.value)} 
+                    className="w-full bg-[#0A0A0A] border border-[#F5F0E8]/30 py-1 px-2 text-[#F5F0E8] text-xs focus:outline-none focus:border-[#D4AF37]"
+                    style={{ colorScheme: 'dark' }}
+                  >
+                    <option value="left" className="bg-[#0A0A0A] text-[#F5F0E8]">Gauche</option>
+                    <option value="center" className="bg-[#0A0A0A] text-[#F5F0E8]">Centre</option>
+                    <option value="right" className="bg-[#0A0A0A] text-[#F5F0E8]">Droite</option>
+                  </select>
+                </div>
               </div>
             );
           }
+
           if (block.type === 'image_standalone' || block.type === 'text_image') {
             return (
               <div key={index} className="space-y-4 border-l-2 border-[#D4AF37]/50 pl-6 relative group">
@@ -254,7 +277,6 @@ function RichTextEditor({ value, onChange }: { value: string, onChange: (val: st
     const newValue = value.substring(0, start) + openTag + selectedText + closeTag + value.substring(end);
     onChange(newValue);
     
-    // Reset focus and selection
     setTimeout(() => {
       textarea.focus();
       const newCursorPos = start + openTag.length;
@@ -262,33 +284,20 @@ function RichTextEditor({ value, onChange }: { value: string, onChange: (val: st
     }, 0);
   };
 
-  const applyColor = (color: string) => {
-    applyFormat(`<span style="color: ${color};">`, '</span>');
-  };
-
-  const applyFont = (font: string) => {
-    applyFormat(`<span style="font-family: '${font}', sans-serif;">`, '</span>');
-  };
-
-  const applySize = (size: string) => {
-    applyFormat(`<span style="font-size: ${size};">`, '</span>');
-  };
+  const applyColor = (color: string) => applyFormat(`<span style="color: ${color};">`, '</span>');
+  const applyFont = (font: string) => applyFormat(`<span style="font-family: '${font}', sans-serif;">`, '</span>');
+  const applySize = (size: string) => applyFormat(`<span style="font-size: ${size};">`, '</span>');
 
   return (
     <div className="relative">
-      {/* TOOLBAR */}
       <div className="flex flex-wrap gap-1 mb-2 p-2 bg-[#0A0A0A] border border-[#F5F0E8]/20 rounded-sm">
         <button type="button" onClick={() => applyFormat('<strong>', '</strong>')} className="px-2 py-1 text-xs text-[#F5F0E8] bg-[#F5F0E8]/10 hover:bg-[#F5F0E8]/20 font-bold">B</button>
         <button type="button" onClick={() => applyFormat('<em>', '</em>')} className="px-2 py-1 text-xs text-[#F5F0E8] bg-[#F5F0E8]/10 hover:bg-[#F5F0E8]/20 italic">I</button>
-        
         <div className="w-px h-5 bg-[#F5F0E8]/20 mx-1 self-center"></div>
-        
         <button type="button" onClick={() => applyColor('#F5F0E8')} className="px-2 py-1 text-xs text-[#F5F0E8] bg-[#F5F0E8]/10 hover:bg-[#F5F0E8]/20">Blanc</button>
         <button type="button" onClick={() => applyColor('#8B1A1A')} className="px-2 py-1 text-xs text-[#8B1A1A] bg-[#8B1A1A]/10 hover:bg-[#8B1A1A]/20">Rouge</button>
         <button type="button" onClick={() => applyColor('#D4AF37')} className="px-2 py-1 text-xs text-[#D4AF37] bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20">Doré</button>
-
         <div className="w-px h-5 bg-[#F5F0E8]/20 mx-1 self-center"></div>
-
         <select onChange={(e) => applySize(e.target.value)} className="px-1 py-1 text-xs bg-[#0A0A0A] border border-[#F5F0E8]/20 text-[#F5F0E8]" style={{ colorScheme: 'dark' }}>
           <option value="">Taille</option>
           <option value="0.75rem">Petit</option>
@@ -296,7 +305,6 @@ function RichTextEditor({ value, onChange }: { value: string, onChange: (val: st
           <option value="1.25rem">Grand</option>
           <option value="1.5rem">Titre</option>
         </select>
-
         <select onChange={(e) => applyFont(e.target.value)} className="px-1 py-1 text-xs bg-[#0A0A0A] border border-[#F5F0E8]/20 text-[#F5F0E8]" style={{ colorScheme: 'dark' }}>
           <option value="">Police</option>
           <option value="Cinzel">Cinzel</option>
@@ -316,7 +324,6 @@ function RichTextEditor({ value, onChange }: { value: string, onChange: (val: st
           <option value="Dancing Script">Dancing Script</option>
         </select>
       </div>
-
       <textarea ref={textareaRef} rows={4} value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-black/20 border border-[#F5F0E8]/30 py-2 px-3 font-outfit text-base text-[#F5F0E8] focus:outline-none focus:border-[#D4AF37] font-light rounded-sm" />
     </div>
   );
@@ -324,10 +331,7 @@ function RichTextEditor({ value, onChange }: { value: string, onChange: (val: st
 
 function ButtonsEditor({ block, index, onMoveBlock, onDeleteBlock, blocksLength, updateButtons }: any) {
   const [text, setText] = useState(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n'));
-
-  useEffect(() => {
-    setText(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n'));
-  }, [block]);
+  useEffect(() => { setText(block.buttons.map((b: any) => `${b.text}, ${b.link}`).join('\n')); }, [block]);
 
   return (
     <div className="space-y-2 relative group">

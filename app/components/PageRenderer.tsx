@@ -87,7 +87,6 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
               );
             }
 
-            // MISE À JOUR : Affichage des Espaces avec les nouvelles données modifiables
             if (block.type === 'spaces_grid') {
               const cards = block.cards || [];
               return (
@@ -125,9 +124,11 @@ export default function PageRenderer({ page, espaces, settings }: { page: any, e
               );
             }
 
+            // MISE À JOUR : Application de l'alignement pour Logo + Titre
             if (block.type === 'heading_with_logo') {
+              const alignClass = block.align === 'right' ? 'justify-end' : block.align === 'center' ? 'justify-center' : 'justify-start';
               return (
-                <div key={index} className="flex flex-row items-center gap-4 mb-8 justify-center md:justify-start">
+                <div key={index} className={`flex flex-row items-center gap-4 mb-8 ${alignClass}`}>
                   <DakiniLogo />
                   <h2 className="font-cinzel text-2xl md:text-3xl text-[#D4AF37]">{block.text}</h2>
                 </div>
